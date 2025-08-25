@@ -222,7 +222,7 @@ lvgl:
             width: 480
             height: 320
             align: CENTER
-            bg_opa: 255
+            bg_opa: 100%
             bg_color: 0x202020
 
         # Title
