@@ -115,14 +115,13 @@ i2c:
   frequency: 400kHz
   scan: true                 # watch logs for detected addresses
 
-# Goodix GT911 (common on JC4832W535). If logs show 0x14, change address below.
+# Goodix GT911 (common on JC4832W535). Update address if logs show a different value (e.g. 0x14).
 touchscreen:
   - platform: gt911
     id: my_touch
     i2c_id: touchscreen_bus
-    address: 0x5D
-    interrupt_pin: GPIO3
-    reset_pin: GPIO10        # keep off any QSPI lines
+    address: 0x3B
+    interrupt_pin: 3
     transform:
       swap_xy: true
       mirror_y: true
