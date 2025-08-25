@@ -1,0 +1,399 @@
+substitutions:
+  friendly_name: Guition Display
+  dev_topic: esp32-c3-35-inch-display   # used for MQTT topics
+
+esphome:
+  name: esp32-c3-35-inch-display
+  friendly_name: ESP32-C3 3.5 inch Display
+  platformio_options:
+    upload_speed: 921600
+    board_build.flash_mode: dio
+    board_build.f_flash: 80000000L
+    board_build.f_cpu: 240000000L
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
+      CONFIG_SPIRAM_FETCH_INSTRUCTIONS: "y"
+      CONFIG_SPIRAM_RODATA: "y"
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+  baud_rate: 921600
+  level: INFO
+
+# Home Assistant native API (needed for homeassistant.service & HA state mirrors)
+api:
+  encryption:
+    key: "zCbqpKMFr1E/T+n7OM26ggGNnIfVMToeC7e0Ue9xeJ4="
+
+# Optional MQTT (publishes button/touch events; accepts simple JSON commands)
+mqtt:
+  broker: !secret mqtt_broker
+  username: !secret mqtt_user
+  password: !secret mqtt_pass
+  topic_prefix: ${dev_topic}
+  discovery: false
+  on_json_message:
+    - topic: cmd/${dev_topic}
+      then:
+        # Set backlight from JSON: {"backlight": 0..100}
+        - if:
+            condition:
+              lambda: 'return x.containsKey("backlight");'
+            then:
+              - light.turn_on:
+                  id: backlight_light
+                  brightness: !lambda 'return (x["backlight"].as<float>() / 100.0f);'
+        # Show page from JSON: {"page":"energy"}
+        - if:
+            condition:
+              lambda: 'return x.containsKey("page") && x["page"].as<std::string>() == "energy";'
+            then:
+              - lvgl.page.show: energy_page
+
+ota:
+  - platform: esphome
+    password: "55ea0f7bcc25fa0433a43dfaf0009751"
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "Esp32-C3-35-Inch-Display"
+    password: "KTWqn606IwU5"
+
+captive_portal:
+
+# ---------- Display (QSPI DBI) ----------
+spi:
+  id: display_qspi
+  type: quad
+  clk_pin: 47
+  data_pins: [21, 48, 40, 39]
+
+output:
+  - platform: ledc
+    pin: GPIO1
+    id: backlight
+
+light:
+  - platform: monochromatic
+    id: backlight_light
+    output: backlight
+    name: "Backlight"
+    restore_mode: ALWAYS_ON
+
+display:
+  - platform: qspi_dbi
+    model: axs15231
+    data_rate: 40MHz        # drop to 20MHz if you ever see garble
+    id: my_display
+    spi_id: display_qspi
+    dimensions:
+      height: 480
+      width: 320
+    cs_pin: 45
+    rotation: 90            # landscape
+    auto_clear_enabled: false
+    update_interval: never
+
+# ---------- Touch (I2C capacitive) ----------
+i2c:
+  id: touchscreen_bus
+  sda: 4
+  scl: 8
+  frequency: 400kHz
+  scan: true                 # watch logs for detected addresses
+
+# Goodix GT911 (common on JC4832W535). If logs show 0x14, change address below.
+touchscreen:
+  - platform: gt911
+    id: my_touch
+    i2c_id: touchscreen_bus
+    address: 0x5D
+    interrupt_pin: GPIO3
+    reset_pin: GPIO10        # keep off any QSPI lines
+    transform:
+      swap_xy: true
+      mirror_y: true
+    on_touch:
+      - mqtt.publish_json:
+          topic: tele/${dev_topic}/touch
+          payload: |-
+            root["x"] = touch.x;
+            root["y"] = touch.y;
+
+# If i2c scan shows 0x38 (FocalTech), comment GT911 above and use this instead:
+# touchscreen:
+#   - platform: ft5x06
+#     id: my_touch
+#     i2c_id: touchscreen_bus
+#     interrupt_pin: GPIO3
+#     reset_pin: GPIO10
+#     transform:
+#       swap_xy: true
+#       mirror_y: true
+#     on_touch:
+#       - mqtt.publish_json:
+#           topic: tele/${dev_topic}/touch
+#           payload: |-
+#             root["x"] = touch.x;
+#             root["y"] = touch.y;
+
+# ---------- Mirror HA entity state -> button labels ----------
+text_sensor:
+  - platform: homeassistant
+    id: ts_roof
+    entity_id: light.lights_house_roof
+    on_value:
+      - lvgl.label.update:
+          id: lbl_roof
+          text: !lambda |-
+            if (x == "on")  return std::string("Roof Lights (ON)");
+            if (x == "off") return std::string("Roof Lights (OFF)");
+            return std::string("Roof Lights (") + x + ")";
+
+  - platform: homeassistant
+    id: ts_bed2
+    entity_id: switch.bedroom_light_switch_2
+    on_value:
+      - lvgl.label.update:
+          id: lbl_bed2
+          text: !lambda |-
+            if (x == "on")  return std::string("Bedroom 2 (ON)");
+            if (x == "off") return std::string("Bedroom 2 (OFF)");
+            return std::string("Bedroom 2 (") + x + ")";
+
+  - platform: homeassistant
+    id: ts_toilet3
+    entity_id: switch.toilet_light_switch_switch_3
+    on_value:
+      - lvgl.label.update:
+          id: lbl_toilet3
+          text: !lambda |-
+            if (x == "on")  return std::string("Toilet (ON)");
+            if (x == "off") return std::string("Toilet (OFF)");
+            return std::string("Toilet (") + x + ")";
+
+  - platform: homeassistant
+    id: ts_shelly
+    entity_id: light.shelly1_c45bbe77bbdc
+    on_value:
+      - lvgl.label.update:
+          id: lbl_shelly
+          text: !lambda |-
+            if (x == "on")  return std::string("Shelly1 (ON)");
+            if (x == "off") return std::string("Shelly1 (OFF)");
+            return std::string("Shelly1 (") + x + ")";
+
+  - platform: homeassistant
+    id: ts_flood
+    entity_id: light.rgb_floodlight
+    on_value:
+      - lvgl.label.update:
+          id: lbl_flood
+          text: !lambda |-
+            if (x == "on")  return std::string("RGB Floodlight (ON)");
+            if (x == "off") return std::string("RGB Floodlight (OFF)");
+            return std::string("RGB Floodlight (") + x + ")";
+
+# ---------- LVGL UI (with working props) ----------
+lvgl:
+  displays:
+    - my_display
+  touchscreens:
+    - touchscreen_id: my_touch
+
+  pages:
+    - id: energy_page
+      widgets:
+        # Background
+        - obj:
+            width: 480
+            height: 320
+            align: CENTER
+            bg_opa: 255
+            bg_color: 0x202020
+
+        # Title
+        - label:
+            text: "Home Controls"
+            align: TOP_MID
+            y: 8
+            text_color: 0xFFFFFF
+
+        # ---- Left column (4 buttons) ----
+        - button:
+            id: btn_roof
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 10
+            y: 36
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: light.lights_house_roof }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_roof
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_roof
+                  text: "Roof Lights (…)"
+                  align: CENTER
+
+        - button:
+            id: btn_bed2
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 10
+            y: 106
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.bedroom_light_switch_2 }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_bed2
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_bed2
+                  text: "Bedroom 2 (…)"
+                  align: CENTER
+
+        - button:
+            id: btn_toilet3
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 10
+            y: 176
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.toilet_light_switch_switch_3 }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_toilet3
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_toilet3
+                  text: "Toilet (…)"
+                  align: CENTER
+
+        - button:
+            id: btn_shelly
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 10
+            y: 246
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: light.shelly1_c45bbe77bbdc }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_shelly
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_shelly
+                  text: "Shelly1 (…)"
+                  align: CENTER
+
+        # ---- Right column (4 buttons) ----
+        - button:
+            id: btn_flood
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 250
+            y: 36
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: light.rgb_floodlight }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_flood
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_flood
+                  text: "RGB Floodlight (…)"
+                  align: CENTER
+
+        - button:
+            id: btn_spare1
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 250
+            y: 106
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: light.REPLACE_ME_1 }   # TODO
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_spare1
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_spare1
+                  text: "Spare 1 (tap to set)"
+                  align: CENTER
+
+        - button:
+            id: btn_spare2
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 250
+            y: 176
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.REPLACE_ME_2 }  # TODO
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_spare2
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_spare2
+                  text: "Spare 2 (tap to set)"
+                  align: CENTER
+
+        - button:
+            id: btn_spare3
+            width: 220
+            height: 60
+            align: TOP_LEFT
+            x: 250
+            y: 246
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: light.REPLACE_ME_3 }   # TODO
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_spare3
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_spare3
+                  text: "Spare 3 (tap to set)"
+                  align: CENTER
+
+  on_boot:
+    then:
+      - lvgl.page.show: energy_page
