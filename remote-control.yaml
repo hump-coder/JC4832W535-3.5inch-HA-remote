@@ -100,8 +100,8 @@ time:
               id: lbl_clock
               text: !lambda |-
                 auto t = id(homeassistant_time).now();
-                char buf[6];
-                snprintf(buf, sizeof(buf), "%02d:%02d", t.hour, t.minute);
+                char buf[9];
+                t.strftime(buf, sizeof(buf), "%I:%M %p");
                 return std::string(buf);
 
 # ---------- Display (QSPI DBI) ----------
