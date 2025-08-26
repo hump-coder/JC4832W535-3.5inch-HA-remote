@@ -43,105 +43,105 @@ lvgl:
 
         # Row 1
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_kitchen
-              label_id: lbl_house_kitchen
-              label_text: "Kitchen"
-              entity_id: light.kitchen_light_dimmer
-              x_pos: '10'
-              y_pos: '36'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_kitchen
+            label_id: lbl_house_kitchen
+            label_text: "Kitchen"
+            entity_id: light.kitchen_light_dimmer
+            x_pos: '10'
+            y_pos: '36'
+            width: '140'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_bedroom
-              label_id: lbl_house_bedroom
-              label_text: "Bedroom"
-              entity_id: switch.bedroom_light_switch_2
-              x_pos: '170'
-              y_pos: '36'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_bedroom
+            label_id: lbl_house_bedroom
+            label_text: "Bedroom"
+            entity_id: switch.bedroom_light_switch_2
+            x_pos: '170'
+            y_pos: '36'
+            width: '140'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_toilet
-              label_id: lbl_house_toilet
-              label_text: "Toilet"
-              entity_id: switch.toilet_light_switch_switch_3
-              x_pos: '330'
-              y_pos: '36'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_toilet
+            label_id: lbl_house_toilet
+            label_text: "Toilet"
+            entity_id: switch.toilet_light_switch_switch_3
+            x_pos: '330'
+            y_pos: '36'
+            width: '140'
+            height: '60'
 
         # Row 2
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_porch
-              label_id: lbl_house_porch
-              label_text: "Porch"
-              entity_id: light.switch_2
-              x_pos: '10'
-              y_pos: '116'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_porch
+            label_id: lbl_house_porch
+            label_text: "Porch"
+            entity_id: light.switch_2
+            x_pos: '10'
+            y_pos: '116'
+            width: '140'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_north
-              label_id: lbl_house_north
-              label_text: "North"
-              entity_id: switch.lights_outside_north
-              x_pos: '170'
-              y_pos: '116'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_north
+            label_id: lbl_house_north
+            label_text: "North"
+            entity_id: switch.lights_outside_north
+            x_pos: '170'
+            y_pos: '116'
+            width: '140'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_bbq
-              label_id: lbl_house_bbq
-              label_text: "BBQ"
-              entity_id: switch.lights_outside_north_bbq
-              x_pos: '330'
-              y_pos: '116'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_bbq
+            label_id: lbl_house_bbq
+            label_text: "BBQ"
+            entity_id: switch.lights_outside_north_bbq
+            x_pos: '330'
+            y_pos: '116'
+            width: '140'
+            height: '60'
 
         # Row 3
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_west
-              label_id: lbl_house_west
-              label_text: "West"
-              entity_id: switch.lights_outside_north_west
-              x_pos: '10'
-              y_pos: '196'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_west
+            label_id: lbl_house_west
+            label_text: "West"
+            entity_id: switch.lights_outside_north_west
+            x_pos: '10'
+            y_pos: '196'
+            width: '140'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_west_flood
-              label_id: lbl_house_west_flood
-              label_text: "West Flood"
-              entity_id: switch.floodlight_outside_east
-              x_pos: '170'
-              y_pos: '196'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_west_flood
+            label_id: lbl_house_west_flood
+            label_text: "West Flood"
+            entity_id: switch.floodlight_outside_east
+            x_pos: '170'
+            y_pos: '196'
+            width: '140'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_house_rgb_flood
-              label_id: lbl_house_rgb_flood
-              label_text: "RGB Flood"
-              entity_id: light.rgb_floodlight
-              x_pos: '330'
-              y_pos: '196'
-              width: '140'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_house_rgb_flood
+            label_id: lbl_house_rgb_flood
+            label_text: "RGB Flood"
+            entity_id: light.rgb_floodlight
+            x_pos: '330'
+            y_pos: '196'
+            width: '140'
+            height: '60'
