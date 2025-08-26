@@ -58,12 +58,17 @@ mqtt:
               - light.turn_on:
                   id: backlight_light
                   brightness: !lambda 'return (x["backlight"].as<float>() / 100.0f);'
-        # Show page from JSON: {"page":"energy"}
+        # Show page from JSON: {"page":"room"} or {"page":"house"}
         - if:
             condition:
-              lambda: 'return x.containsKey("page") && x["page"].as<std::string>() == "energy";'
+              lambda: 'return x.containsKey("page") && x["page"].as<std::string>() == "room";'
             then:
-              - lvgl.page.show: energy_page
+              - lvgl.page.show: room_page
+        - if:
+            condition:
+              lambda: 'return x.containsKey("page") && x["page"].as<std::string>() == "house";'
+            then:
+              - lvgl.page.show: house_page
 
 ota:
   - platform: esphome
@@ -80,9 +85,17 @@ wifi:
         id: lbl_wifi
         text: LV_SYMBOL_WIFI
         text_color: 0xFFFFFF
+    - lvgl.label.update:
+        id: lbl_wifi_h
+        text: LV_SYMBOL_WIFI
+        text_color: 0xFFFFFF
   on_disconnect:
     - lvgl.label.update:
         id: lbl_wifi
+        text: LV_SYMBOL_CLOSE
+        text_color: 0xFF0000
+    - lvgl.label.update:
+        id: lbl_wifi_h
         text: LV_SYMBOL_CLOSE
         text_color: 0xFF0000
 
@@ -98,6 +111,13 @@ time:
         then:
           - lvgl.label.update:
               id: lbl_clock
+              text: !lambda |-
+                auto t = id(homeassistant_time).now();
+                char buf[9];
+                t.strftime(buf, sizeof(buf), "%I:%M %p");
+                return std::string(buf);
+          - lvgl.label.update:
+              id: lbl_clock_h
               text: !lambda |-
                 auto t = id(homeassistant_time).now();
                 char buf[9];
@@ -196,112 +216,6 @@ touchscreen:
 #             root["x"] = touch.x;
 #             root["y"] = touch.y;
 
-# ---------- Mirror HA entity state -> button labels ----------
-text_sensor:
-  - platform: homeassistant
-    id: ts_roof
-    entity_id: light.lights_house_roof
-    on_value:
-      - lvgl.label.update:
-          id: lbl_roof
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("Roof Lights");
-            return std::string("Roof Lights (") + x + ")";
-      - lvgl.button.update:
-          id: btn_roof
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
-
-  - platform: homeassistant
-    id: ts_bed2
-    entity_id: switch.bedroom_light_switch_2
-    on_value:
-      - lvgl.label.update:
-          id: lbl_bed2
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("Bedroom 2");
-            return std::string("Bedroom 2 (") + x + ")";
-      - lvgl.button.update:
-          id: btn_bed2
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
-
-  - platform: homeassistant
-    id: ts_toilet3
-    entity_id: switch.toilet_light_switch_switch_3
-    on_value:
-      - lvgl.label.update:
-          id: lbl_toilet3
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("Toilet");
-            return std::string("Toilet (") + x + ")";
-      - lvgl.button.update:
-          id: btn_toilet3
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
-
-  - platform: homeassistant
-    id: ts_shelly
-    entity_id: light.shelly1_c45bbe77bbdc
-    on_value:
-      - lvgl.label.update:
-          id: lbl_shelly
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("Shelly1");
-            return std::string("Shelly1 (") + x + ")";
-      - lvgl.button.update:
-          id: btn_shelly
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
-
-  - platform: homeassistant
-    id: ts_flood
-    entity_id: light.rgb_floodlight
-    on_value:
-      - lvgl.label.update:
-          id: lbl_flood
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("RGB Floodlight");
-            return std::string("RGB Floodlight (") + x + ")";
-      - lvgl.button.update:
-          id: btn_flood
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
 
 # WiFi signal strength sensor
 sensor:
@@ -326,9 +240,12 @@ lvgl:
     - my_display
   touchscreens:
     - touchscreen_id: my_touch
-
   pages:
-    - id: energy_page
+    - id: room_page
+      on_swipe_left:
+        - lvgl.page.show: house_page
+      on_swipe_right:
+        - lvgl.page.show: house_page
       widgets:
         # Background
         - obj:
@@ -342,7 +259,7 @@ lvgl:
 
         # Title
         - label:
-            text: "Home Controls"
+            text: "Room"
             align: TOP_MID
             y: 8
             text_color: 0xFFFFFF
@@ -365,9 +282,9 @@ lvgl:
             y: 5
             text_color: 0xFFFFFF
 
-        # ---- Left column (4 buttons) ----
+        # Buttons
         - button:
-            id: btn_roof
+            id: btn_room_bedroom
             width: 220
             height: 60
             align: TOP_LEFT
@@ -379,18 +296,18 @@ lvgl:
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
-                  data: { entity_id: light.lights_house_roof }
+                  data: { entity_id: switch.bedroom_light_switch_2 }
               - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_roof
+                  topic: stat/${dev_topic}/btn_room_bedroom
                   payload: "click"
             widgets:
               - label:
-                  id: lbl_roof
-                  text: "Roof Lights (…)"
+                  id: lbl_room_bedroom
+                  text: "Bedroom"
                   align: CENTER
 
         - button:
-            id: btn_bed2
+            id: btn_room_kitchen
             width: 220
             height: 60
             align: TOP_LEFT
@@ -402,18 +319,18 @@ lvgl:
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
-                  data: { entity_id: switch.bedroom_light_switch_2 }
+                  data: { entity_id: light.kitchen_light_dimmer }
               - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_bed2
+                  topic: stat/${dev_topic}/btn_room_kitchen
                   payload: "click"
             widgets:
               - label:
-                  id: lbl_bed2
-                  text: "Bedroom 2 (…)"
+                  id: lbl_room_kitchen
+                  text: "Kitchen"
                   align: CENTER
 
         - button:
-            id: btn_toilet3
+            id: btn_room_toilet
             width: 220
             height: 60
             align: TOP_LEFT
@@ -427,45 +344,249 @@ lvgl:
                   service: homeassistant.toggle
                   data: { entity_id: switch.toilet_light_switch_switch_3 }
               - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_toilet3
+                  topic: stat/${dev_topic}/btn_room_toilet
                   payload: "click"
             widgets:
               - label:
-                  id: lbl_toilet3
-                  text: "Toilet (…)"
+                  id: lbl_room_toilet
+                  text: "Toilet"
                   align: CENTER
 
+    - id: house_page
+      on_swipe_left:
+        - lvgl.page.show: room_page
+      on_swipe_right:
+        - lvgl.page.show: room_page
+      widgets:
+        # Background
+        - obj:
+            width: 480
+            height: 320
+            align: CENTER
+            bg_opa: 100%
+            bg_color: 0x202020
+            bg_grad_color: 0x000000
+            bg_grad_dir: VER
+
+        # Title
+        - label:
+            text: "House"
+            align: TOP_MID
+            y: 8
+            text_color: 0xFFFFFF
+
+        # Clock
+        - label:
+            id: lbl_clock_h
+            text: "00:00"
+            align: TOP_LEFT
+            x: 5
+            y: 5
+            text_color: 0xFFFFFF
+
+        # WiFi status
+        - label:
+            id: lbl_wifi_h
+            text: ""
+            align: TOP_RIGHT
+            x: -5
+            y: 5
+            text_color: 0xFFFFFF
+
+        # Row 1
         - button:
-            id: btn_shelly
-            width: 220
+            id: btn_house_kitchen
+            width: 140
             height: 60
             align: TOP_LEFT
             x: 10
-            y: 246
+            y: 36
             bg_color: 0x808080
             bg_grad_color: 0x606060
             bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
-                  data: { entity_id: light.shelly1_c45bbe77bbdc }
+                  data: { entity_id: light.kitchen_light_dimmer }
               - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_shelly
+                  topic: stat/${dev_topic}/btn_house_kitchen
                   payload: "click"
             widgets:
               - label:
-                  id: lbl_shelly
-                  text: "Shelly1 (…)"
+                  id: lbl_house_kitchen
+                  text: "Kitchen"
                   align: CENTER
 
-        # ---- Right column (4 buttons) ----
         - button:
-            id: btn_flood
-            width: 220
+            id: btn_house_bedroom
+            width: 140
             height: 60
             align: TOP_LEFT
-            x: 250
+            x: 170
             y: 36
+            bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.bedroom_light_switch_2 }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_house_bedroom
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_house_bedroom
+                  text: "Bedroom"
+                  align: CENTER
+
+        - button:
+            id: btn_house_toilet
+            width: 140
+            height: 60
+            align: TOP_LEFT
+            x: 330
+            y: 36
+            bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.toilet_light_switch_switch_3 }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_house_toilet
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_house_toilet
+                  text: "Toilet"
+                  align: CENTER
+
+        # Row 2
+        - button:
+            id: btn_house_porch
+            width: 140
+            height: 60
+            align: TOP_LEFT
+            x: 10
+            y: 116
+            bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: light.switch_2 }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_house_porch
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_house_porch
+                  text: "Porch"
+                  align: CENTER
+
+        - button:
+            id: btn_house_north
+            width: 140
+            height: 60
+            align: TOP_LEFT
+            x: 170
+            y: 116
+            bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.lights_outside_north }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_house_north
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_house_north
+                  text: "North"
+                  align: CENTER
+
+        - button:
+            id: btn_house_bbq
+            width: 140
+            height: 60
+            align: TOP_LEFT
+            x: 330
+            y: 116
+            bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.lights_outside_north_bbq }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_house_bbq
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_house_bbq
+                  text: "BBQ"
+                  align: CENTER
+
+        # Row 3
+        - button:
+            id: btn_house_west
+            width: 140
+            height: 60
+            align: TOP_LEFT
+            x: 10
+            y: 196
+            bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.lights_outside_north_west }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_house_west
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_house_west
+                  text: "West"
+                  align: CENTER
+
+        - button:
+            id: btn_house_west_flood
+            width: 140
+            height: 60
+            align: TOP_LEFT
+            x: 170
+            y: 196
+            bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
+            on_click:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data: { entity_id: switch.floodlight_outside_east }
+              - mqtt.publish:
+                  topic: stat/${dev_topic}/btn_house_west_flood
+                  payload: "click"
+            widgets:
+              - label:
+                  id: lbl_house_west_flood
+                  text: "West Flood"
+                  align: CENTER
+
+        - button:
+            id: btn_house_rgb_flood
+            width: 140
+            height: 60
+            align: TOP_LEFT
+            x: 330
+            y: 196
             bg_color: 0x808080
             bg_grad_color: 0x606060
             bg_grad_dir: VER
@@ -474,83 +595,14 @@ lvgl:
                   service: homeassistant.toggle
                   data: { entity_id: light.rgb_floodlight }
               - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_flood
+                  topic: stat/${dev_topic}/btn_house_rgb_flood
                   payload: "click"
             widgets:
               - label:
-                  id: lbl_flood
-                  text: "RGB Floodlight (…)"
-                  align: CENTER
-
-        - button:
-            id: btn_spare1
-            width: 220
-            height: 60
-            align: TOP_LEFT
-            x: 250
-            y: 106
-            bg_color: 0x808080
-            bg_grad_color: 0x606060
-            bg_grad_dir: VER
-            on_click:
-              - homeassistant.service:
-                  service: homeassistant.toggle
-                  data: { entity_id: light.REPLACE_ME_1 }   # TODO
-              - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_spare1
-                  payload: "click"
-            widgets:
-              - label:
-                  id: lbl_spare1
-                  text: ""
-                  align: CENTER
-
-        - button:
-            id: btn_spare2
-            width: 220
-            height: 60
-            align: TOP_LEFT
-            x: 250
-            y: 176
-            bg_color: 0x808080
-            bg_grad_color: 0x606060
-            bg_grad_dir: VER
-            on_click:
-              - homeassistant.service:
-                  service: homeassistant.toggle
-                  data: { entity_id: switch.REPLACE_ME_2 }  # TODO
-              - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_spare2
-                  payload: "click"
-            widgets:
-              - label:
-                  id: lbl_spare2
-                  text: ""
-                  align: CENTER
-
-        - button:
-            id: btn_spare3
-            width: 220
-            height: 60
-            align: TOP_LEFT
-            x: 250
-            y: 246
-            bg_color: 0x808080
-            bg_grad_color: 0x606060
-            bg_grad_dir: VER
-            on_click:
-              - homeassistant.service:
-                  service: homeassistant.toggle
-                  data: { entity_id: light.REPLACE_ME_3 }   # TODO
-              - mqtt.publish:
-                  topic: stat/${dev_topic}/btn_spare3
-                  payload: "click"
-            widgets:
-              - label:
-                  id: lbl_spare3
-                  text: ""
+                  id: lbl_house_rgb_flood
+                  text: "RGB Flood"
                   align: CENTER
 
   on_boot:
     then:
-      - lvgl.page.show: energy_page
+      - lvgl.page.show: room_page
