@@ -1,3 +1,4 @@
+---
 substitutions:
   friendly_name: Guition Display
   dev_topic: esp32-c3-35-inch-display
@@ -95,3 +96,23 @@ i2c:
   scl: 8
   frequency: 400kHz
   scan: true
+
+# After the initial scan logs the detected I2C addresses, probe a few
+# common touch-controller addresses and dump the first four bytes from
+# register 0.  This hex signature can be compared against datasheets to
+# identify which chip is present on the bus (e.g. Goodix, FocalTech,
+# TT21100, etc.).
+interval:
+  - interval: 5s
+    then:
+      - lambda: |-
+          const uint8_t addrs[] = {0x14, 0x38, 0x3B, 0x5D};
+          uint8_t reg = 0x00;
+          uint8_t data[4];
+          for (auto addr : addrs) {
+            if (id(touchscreen_bus).write(addr, &reg, 1) &&
+                id(touchscreen_bus).read(addr, data, sizeof(data))) {
+              ESP_LOGI("i2c-probe", "Addr 0x%02X -> %02X %02X %02X %02X", addr,
+                       data[0], data[1], data[2], data[3]);
+            }
+          }
