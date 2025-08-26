@@ -118,7 +118,7 @@ i2c:
 # Goodix GT911 touch controller (common on JC3248W535).
 # Update address if logs show a different value (e.g., 0x14).
 touchscreen:
-  - platform: gt911
+  - platform: axs15231
     id: my_touch
     i2c_id: touchscreen_bus
     address: 0x3B
@@ -142,7 +142,7 @@ touchscreen:
             root["x"] = touch.x;
             root["y"] = touch.y;
 
-# If i2c scan shows 0x38 (FocalTech), comment GT911 above and use this instead:
+# If i2c scan shows 0x38 (FocalTech), comment AXS15231 above and use this instead:
 # touchscreen:
 #   - platform: ft5x06
 #     id: my_touch
