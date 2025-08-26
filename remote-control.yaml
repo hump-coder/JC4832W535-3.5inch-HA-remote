@@ -179,8 +179,7 @@ text_sensor:
       - lvgl.label.update:
           id: lbl_roof
           text: !lambda |-
-            if (x == "on")  return std::string("Roof Lights (ON)");
-            if (x == "off") return std::string("Roof Lights (OFF)");
+            if (x == "on" || x == "off") return std::string("Roof Lights");
             return std::string("Roof Lights (") + x + ")";
       - lvgl.button.update:
           id: btn_roof
@@ -201,8 +200,7 @@ text_sensor:
       - lvgl.label.update:
           id: lbl_bed2
           text: !lambda |-
-            if (x == "on")  return std::string("Bedroom 2 (ON)");
-            if (x == "off") return std::string("Bedroom 2 (OFF)");
+            if (x == "on" || x == "off") return std::string("Bedroom 2");
             return std::string("Bedroom 2 (") + x + ")";
       - lvgl.button.update:
           id: btn_bed2
@@ -223,8 +221,7 @@ text_sensor:
       - lvgl.label.update:
           id: lbl_toilet3
           text: !lambda |-
-            if (x == "on")  return std::string("Toilet (ON)");
-            if (x == "off") return std::string("Toilet (OFF)");
+            if (x == "on" || x == "off") return std::string("Toilet");
             return std::string("Toilet (") + x + ")";
       - lvgl.button.update:
           id: btn_toilet3
@@ -245,8 +242,7 @@ text_sensor:
       - lvgl.label.update:
           id: lbl_shelly
           text: !lambda |-
-            if (x == "on")  return std::string("Shelly1 (ON)");
-            if (x == "off") return std::string("Shelly1 (OFF)");
+            if (x == "on" || x == "off") return std::string("Shelly1");
             return std::string("Shelly1 (") + x + ")";
       - lvgl.button.update:
           id: btn_shelly
@@ -267,8 +263,7 @@ text_sensor:
       - lvgl.label.update:
           id: lbl_flood
           text: !lambda |-
-            if (x == "on")  return std::string("RGB Floodlight (ON)");
-            if (x == "off") return std::string("RGB Floodlight (OFF)");
+            if (x == "on" || x == "off") return std::string("RGB Floodlight");
             return std::string("RGB Floodlight (") + x + ")";
       - lvgl.button.update:
           id: btn_flood
@@ -455,7 +450,7 @@ lvgl:
             widgets:
               - label:
                   id: lbl_spare1
-                  text: "Spare 1 (tap to set)"
+                  text: ""
                   align: CENTER
 
         - button:
@@ -478,7 +473,7 @@ lvgl:
             widgets:
               - label:
                   id: lbl_spare2
-                  text: "Spare 2 (tap to set)"
+                  text: ""
                   align: CENTER
 
         - button:
@@ -501,7 +496,7 @@ lvgl:
             widgets:
               - label:
                   id: lbl_spare3
-                  text: "Spare 3 (tap to set)"
+                  text: ""
                   align: CENTER
 
   on_boot:
