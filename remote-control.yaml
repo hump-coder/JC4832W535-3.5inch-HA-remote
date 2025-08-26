@@ -188,6 +188,11 @@ text_sensor:
             if (x == "on")  return lv_color_hex(0xffc107);
             if (x == "off") return lv_color_hex(0x2d87c8);
             return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
 
   - platform: homeassistant
     id: ts_bed2
@@ -205,6 +210,11 @@ text_sensor:
             if (x == "on")  return lv_color_hex(0xffc107);
             if (x == "off") return lv_color_hex(0x2d87c8);
             return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
 
   - platform: homeassistant
     id: ts_toilet3
@@ -222,6 +232,11 @@ text_sensor:
             if (x == "on")  return lv_color_hex(0xffc107);
             if (x == "off") return lv_color_hex(0x2d87c8);
             return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
 
   - platform: homeassistant
     id: ts_shelly
@@ -239,6 +254,11 @@ text_sensor:
             if (x == "on")  return lv_color_hex(0xffc107);
             if (x == "off") return lv_color_hex(0x2d87c8);
             return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
 
   - platform: homeassistant
     id: ts_flood
@@ -256,6 +276,11 @@ text_sensor:
             if (x == "on")  return lv_color_hex(0xffc107);
             if (x == "off") return lv_color_hex(0x2d87c8);
             return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
 
 # ---------- LVGL UI (with working props) ----------
 lvgl:
@@ -274,6 +299,8 @@ lvgl:
             align: CENTER
             bg_opa: 100%
             bg_color: 0x202020
+            bg_grad_color: 0x000000
+            bg_grad_dir: VER
 
         # Title
         - label:
@@ -300,6 +327,8 @@ lvgl:
             x: 10
             y: 36
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
@@ -321,6 +350,8 @@ lvgl:
             x: 10
             y: 106
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
@@ -342,6 +373,8 @@ lvgl:
             x: 10
             y: 176
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
@@ -363,6 +396,8 @@ lvgl:
             x: 10
             y: 246
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
@@ -385,6 +420,8 @@ lvgl:
             x: 250
             y: 36
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
@@ -406,6 +443,8 @@ lvgl:
             x: 250
             y: 106
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
@@ -427,6 +466,8 @@ lvgl:
             x: 250
             y: 176
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
@@ -448,6 +489,8 @@ lvgl:
             x: 250
             y: 246
             bg_color: 0x808080
+            bg_grad_color: 0x606060
+            bg_grad_dir: VER
             on_click:
               - homeassistant.service:
                   service: homeassistant.toggle
