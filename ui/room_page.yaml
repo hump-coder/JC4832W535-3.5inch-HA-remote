@@ -43,35 +43,35 @@ lvgl:
 
         # Buttons
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_room_bedroom
-              label_id: lbl_room_bedroom
-              label_text: "Bedroom"
-              entity_id: switch.bedroom_light_switch_2
-              x_pos: '10'
-              y_pos: '36'
-              width: '220'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_room_bedroom
+            label_id: lbl_room_bedroom
+            label_text: "Bedroom"
+            entity_id: switch.bedroom_light_switch_2
+            x_pos: '10'
+            y_pos: '36'
+            width: '220'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_room_kitchen
-              label_id: lbl_room_kitchen
-              label_text: "Kitchen"
-              entity_id: light.kitchen_light_dimmer
-              x_pos: '10'
-              y_pos: '106'
-              width: '220'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_room_kitchen
+            label_id: lbl_room_kitchen
+            label_text: "Kitchen"
+            entity_id: light.kitchen_light_dimmer
+            x_pos: '10'
+            y_pos: '106'
+            width: '220'
+            height: '60'
         - !include
-            file: button_template.yaml
-            vars:
-              btn_id: btn_room_toilet
-              label_id: lbl_room_toilet
-              label_text: "Toilet"
-              entity_id: switch.toilet_light_switch_switch_3
-              x_pos: '10'
-              y_pos: '176'
-              width: '220'
-              height: '60'
+          file: button_template.yaml
+          vars:
+            btn_id: btn_room_toilet
+            label_id: lbl_room_toilet
+            label_text: "Toilet"
+            entity_id: switch.toilet_light_switch_switch_3
+            x_pos: '10'
+            y_pos: '176'
+            width: '220'
+            height: '60'
