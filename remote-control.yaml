@@ -75,8 +75,34 @@ wifi:
   ap:
     ssid: "Esp32-C3-35-Inch-Display"
     password: "KTWqn606IwU5"
+  on_connect:
+    - lvgl.label.update:
+        id: lbl_wifi
+        text: LV_SYMBOL_WIFI
+        text_color: 0xFFFFFF
+  on_disconnect:
+    - lvgl.label.update:
+        id: lbl_wifi
+        text: LV_SYMBOL_CLOSE
+        text_color: 0xFF0000
 
 captive_portal:
+
+# Clock source from Home Assistant
+time:
+  - platform: homeassistant
+    id: homeassistant_time
+    on_time:
+      - seconds: 0
+        minutes: /1
+        then:
+          - lvgl.label.update:
+              id: lbl_clock
+              text: !lambda |-
+                auto t = id(homeassistant_time).now();
+                char buf[6];
+                snprintf(buf, sizeof(buf), "%02d:%02d", t.hour, t.minute);
+                return std::string(buf);
 
 # ---------- Display (QSPI DBI) ----------
 spi:
@@ -277,6 +303,23 @@ text_sensor:
             return lv_color_hex(0x606060);
           bg_grad_dir: VER
 
+# WiFi signal strength sensor
+sensor:
+  - platform: wifi_signal
+    id: wifi_dbm
+    update_interval: 10s
+    on_value:
+      - lvgl.label.update:
+          id: lbl_wifi
+          text: !lambda |-
+            int bars = 0;
+            if (x >= -55) bars = 4;
+            else if (x >= -65) bars = 3;
+            else if (x >= -75) bars = 2;
+            else if (x >= -85) bars = 1;
+            const char* levels[] = {"", "|", "||", "|||", "||||"};
+            return std::string(LV_SYMBOL_WIFI " ") + levels[bars];
+
 # ---------- LVGL UI (with working props) ----------
 lvgl:
   displays:
@@ -304,12 +347,21 @@ lvgl:
             y: 8
             text_color: 0xFFFFFF
 
-        # Touch debug label
+        # Clock
         - label:
-            id: lbl_touch
-            text: ""
+            id: lbl_clock
+            text: "00:00"
             align: TOP_LEFT
             x: 5
+            y: 5
+            text_color: 0xFFFFFF
+
+        # WiFi status
+        - label:
+            id: lbl_wifi
+            text: ""
+            align: TOP_RIGHT
+            x: -5
             y: 5
             text_color: 0xFFFFFF
 
