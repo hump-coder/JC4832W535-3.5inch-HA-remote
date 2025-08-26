@@ -42,7 +42,7 @@ lvgl:
             text_color: 0xFFFFFF
 
         # Row 1
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_kitchen
@@ -53,7 +53,7 @@ lvgl:
               y_pos: '36'
               width: '140'
               height: '60'
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_bedroom
@@ -64,7 +64,7 @@ lvgl:
               y_pos: '36'
               width: '140'
               height: '60'
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_toilet
@@ -77,7 +77,7 @@ lvgl:
               height: '60'
 
         # Row 2
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_porch
@@ -88,7 +88,7 @@ lvgl:
               y_pos: '116'
               width: '140'
               height: '60'
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_north
@@ -99,7 +99,7 @@ lvgl:
               y_pos: '116'
               width: '140'
               height: '60'
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_bbq
@@ -112,7 +112,7 @@ lvgl:
               height: '60'
 
         # Row 3
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_west
@@ -123,7 +123,7 @@ lvgl:
               y_pos: '196'
               width: '140'
               height: '60'
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_west_flood
@@ -134,7 +134,7 @@ lvgl:
               y_pos: '196'
               width: '140'
               height: '60'
-        - <<: !include
+        - !include
             file: button_template.yaml
             vars:
               btn_id: btn_house_rgb_flood
