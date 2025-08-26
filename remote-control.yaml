@@ -29,7 +29,7 @@ psram:
 
 logger:
   baud_rate: 921600
-  level: INFO
+  level: DEBUG
 
 # Home Assistant native API (needed for homeassistant.service & HA state mirrors)
 api:
@@ -113,7 +113,7 @@ i2c:
   sda: 4
   scl: 8
   frequency: 400kHz
-  scan: true                 # watch logs for detected addresses
+  scan: false                # 0x3B device found during scan
 
 # Goodix GT911 touch controller (common on JC3248W535).
 # Update address if logs show a different value (e.g., 0x14).
@@ -127,6 +127,10 @@ touchscreen:
       swap_xy: true
       mirror_y: true
     on_touch:
+      - logger.log:
+          format: "Touch: (%d,%d)"
+          args: [touch.x, touch.y]
+          level: DEBUG
       - lvgl.label.update:
           id: lbl_touch
           text: !lambda |-
