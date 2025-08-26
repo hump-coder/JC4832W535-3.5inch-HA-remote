@@ -1,0 +1,23 @@
+button:
+  id: ${btn_id}
+  width: ${width}
+  height: ${height}
+  align: TOP_LEFT
+  x: ${x_pos}
+  y: ${y_pos}
+  bg_color: 0x808080
+  bg_grad_color: 0x606060
+  bg_grad_dir: VER
+  on_click:
+    - homeassistant.service:
+        service: homeassistant.toggle
+        data:
+          entity_id: ${entity_id}
+    - mqtt.publish:
+        topic: stat/${dev_topic}/${btn_id}
+        payload: "click"
+  widgets:
+    - label:
+        id: ${label_id}
+        text: ${label_text}
+        align: CENTER
