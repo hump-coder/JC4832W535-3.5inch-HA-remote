@@ -2,6 +2,10 @@ substitutions:
   friendly_name: Guition Display
   dev_topic: esp32-c3-35-inch-display   # used for MQTT topics
 
+external_components:
+  - source: github://esphome/esphome@2025.7.1
+    components: [i2c]
+
 esphome:
   name: esp32-c3-35-inch-display
   friendly_name: ESP32-C3 3.5 inch Display
@@ -121,21 +125,28 @@ touchscreen:
   - platform: axs15231
     id: my_touch
     i2c_id: touchscreen_bus
-    address: 0x3B
+    update_interval: 30ms
+    calibration:
+      x_min: 0
+      x_max: 479
+      y_min: 0
+      y_max: 319
+    #address: 0x3B
     transform:
       swap_xy: true
       mirror_y: true
+      mirror_x: false
     on_touch:
-      - logger.log:
-          format: "Touch: (%d,%d)"
-          args: [touch.x, touch.y]
-          level: DEBUG
-      - lvgl.label.update:
-          id: lbl_touch
-          text: !lambda |-
-            char buf[32];
-            snprintf(buf, sizeof(buf), "%d,%d", touch.x, touch.y);
-            return std::string(buf);
+ #     - logger.log:
+ #         format: "Touch: (%d,%d)"
+ #         args: [touch.x, touch.y]
+ #         level: DEBUG
+ #     - lvgl.label.update:
+ #         id: lbl_touch
+ #         text: !lambda |-
+ #           char buf[32];
+ #           snprintf(buf, sizeof(buf), "%d,%d", touch.x, touch.y);
+ #           return std::string(buf);
       - mqtt.publish_json:
           topic: tele/${dev_topic}/touch
           payload: |-
