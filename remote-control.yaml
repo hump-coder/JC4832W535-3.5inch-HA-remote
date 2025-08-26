@@ -124,6 +124,236 @@ time:
                 t.strftime(buf, sizeof(buf), "%I:%M %p");
                 return std::string(buf);
 
+text_sensor:
+  - platform: homeassistant
+    id: ts_kitchen
+    entity_id: light.kitchen_light_dimmer
+    on_value:
+      - lvgl.label.update:
+          id: lbl_room_kitchen
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("Kitchen");
+            return std::string("Kitchen (") + x + ")";
+      - lvgl.label.update:
+          id: lbl_house_kitchen
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("Kitchen");
+            return std::string("Kitchen (") + x + ")";
+      - lvgl.button.update:
+          id: btn_room_kitchen
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+      - lvgl.button.update:
+          id: btn_house_kitchen
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_bedroom
+    entity_id: switch.bedroom_light_switch_2
+    on_value:
+      - lvgl.label.update:
+          id: lbl_room_bedroom
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("Bedroom");
+            return std::string("Bedroom (") + x + ")";
+      - lvgl.label.update:
+          id: lbl_house_bedroom
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("Bedroom");
+            return std::string("Bedroom (") + x + ")";
+      - lvgl.button.update:
+          id: btn_room_bedroom
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+      - lvgl.button.update:
+          id: btn_house_bedroom
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_toilet
+    entity_id: switch.toilet_light_switch_switch_3
+    on_value:
+      - lvgl.label.update:
+          id: lbl_room_toilet
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("Toilet");
+            return std::string("Toilet (") + x + ")";
+      - lvgl.label.update:
+          id: lbl_house_toilet
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("Toilet");
+            return std::string("Toilet (") + x + ")";
+      - lvgl.button.update:
+          id: btn_room_toilet
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+      - lvgl.button.update:
+          id: btn_house_toilet
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_porch
+    entity_id: light.switch_2
+    on_value:
+      - lvgl.label.update:
+          id: lbl_house_porch
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("Porch");
+            return std::string("Porch (") + x + ")";
+      - lvgl.button.update:
+          id: btn_house_porch
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_north
+    entity_id: switch.lights_outside_north
+    on_value:
+      - lvgl.label.update:
+          id: lbl_house_north
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("North");
+            return std::string("North (") + x + ")";
+      - lvgl.button.update:
+          id: btn_house_north
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_bbq
+    entity_id: switch.lights_outside_north_bbq
+    on_value:
+      - lvgl.label.update:
+          id: lbl_house_bbq
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("BBQ");
+            return std::string("BBQ (") + x + ")";
+      - lvgl.button.update:
+          id: btn_house_bbq
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_west
+    entity_id: switch.lights_outside_north_west
+    on_value:
+      - lvgl.label.update:
+          id: lbl_house_west
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("West");
+            return std::string("West (") + x + ")";
+      - lvgl.button.update:
+          id: btn_house_west
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_west_flood
+    entity_id: switch.floodlight_outside_east
+    on_value:
+      - lvgl.label.update:
+          id: lbl_house_west_flood
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("West Flood");
+            return std::string("West Flood (") + x + ")";
+      - lvgl.button.update:
+          id: btn_house_west_flood
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_rgb_flood
+    entity_id: light.rgb_floodlight
+    on_value:
+      - lvgl.label.update:
+          id: lbl_house_rgb_flood
+          text: !lambda |-
+            if (x == "on" || x == "off") return std::string("RGB Flood");
+            return std::string("RGB Flood (") + x + ")";
+      - lvgl.button.update:
+          id: btn_house_rgb_flood
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+
 # ---------- Display (QSPI DBI) ----------
 spi:
   id: display_qspi
