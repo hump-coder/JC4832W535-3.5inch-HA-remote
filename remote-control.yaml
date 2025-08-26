@@ -115,7 +115,8 @@ i2c:
   frequency: 400kHz
   scan: true                 # watch logs for detected addresses
 
-# Goodix GT911 (common on JC4832W535). Update address if logs show a different value (e.g. 0x14).
+# Goodix GT911 touch controller (common on JC3248W535).
+# Update address if logs show a different value (e.g., 0x14).
 touchscreen:
   - platform: gt911
     id: my_touch
