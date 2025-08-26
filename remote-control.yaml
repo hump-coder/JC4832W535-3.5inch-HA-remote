@@ -122,7 +122,6 @@ touchscreen:
     id: my_touch
     i2c_id: touchscreen_bus
     address: 0x3B
-    interrupt_pin: 3
     transform:
       swap_xy: true
       mirror_y: true
