@@ -126,6 +126,12 @@ touchscreen:
       swap_xy: true
       mirror_y: true
     on_touch:
+      - lvgl.label.update:
+          id: lbl_touch
+          text: !lambda |-
+            char buf[32];
+            snprintf(buf, sizeof(buf), "%d,%d", touch.x, touch.y);
+            return std::string(buf);
       - mqtt.publish_json:
           topic: tele/${dev_topic}/touch
           payload: |-
@@ -229,6 +235,15 @@ lvgl:
             text: "Home Controls"
             align: TOP_MID
             y: 8
+            text_color: 0xFFFFFF
+
+        # Touch debug label
+        - label:
+            id: lbl_touch
+            text: ""
+            align: TOP_LEFT
+            x: 5
+            y: 5
             text_color: 0xFFFFFF
 
         # ---- Left column (4 buttons) ----
