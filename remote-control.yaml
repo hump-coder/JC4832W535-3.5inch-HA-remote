@@ -1,10 +1,19 @@
 substitutions:
   friendly_name: Guition Display
   dev_topic: esp32-c3-35-inch-display   # used for MQTT topics
+  room_light: light.kitchen_light_dimmer
+  room_temp_sensor: sensor.kitchen_temperature
+  room_climate_entity: climate.kitchen
+  room_ac_zone_switch: switch.kitchen_ac_zone
 
 external_components:
   - source: github://esphome/esphome@2025.7.1
     components: [i2c]
+
+font:
+  - file: "gfonts://Roboto"
+    id: font_clock
+    size: 48
 
 esphome:
   name: esp32-c3-35-inch-display
@@ -133,26 +142,10 @@ text_sensor:
     entity_id: light.kitchen_light_dimmer
     on_value:
       - lvgl.label.update:
-          id: lbl_room_kitchen
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("Kitchen");
-            return std::string("Kitchen (") + x + ")";
-      - lvgl.label.update:
           id: lbl_house_kitchen
           text: !lambda |-
             if (x == "on" || x == "off") return std::string("Kitchen");
             return std::string("Kitchen (") + x + ")";
-      - lvgl.button.update:
-          id: btn_room_kitchen
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
       - lvgl.button.update:
           id: btn_house_kitchen
           bg_color: !lambda |-
@@ -169,26 +162,10 @@ text_sensor:
     entity_id: switch.bedroom_light_switch_2
     on_value:
       - lvgl.label.update:
-          id: lbl_room_bedroom
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("Bedroom");
-            return std::string("Bedroom (") + x + ")";
-      - lvgl.label.update:
           id: lbl_house_bedroom
           text: !lambda |-
             if (x == "on" || x == "off") return std::string("Bedroom");
             return std::string("Bedroom (") + x + ")";
-      - lvgl.button.update:
-          id: btn_room_bedroom
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
       - lvgl.button.update:
           id: btn_house_bedroom
           bg_color: !lambda |-
@@ -205,26 +182,10 @@ text_sensor:
     entity_id: switch.toilet_light_switch_switch_3
     on_value:
       - lvgl.label.update:
-          id: lbl_room_toilet
-          text: !lambda |-
-            if (x == "on" || x == "off") return std::string("Toilet");
-            return std::string("Toilet (") + x + ")";
-      - lvgl.label.update:
           id: lbl_house_toilet
           text: !lambda |-
             if (x == "on" || x == "off") return std::string("Toilet");
             return std::string("Toilet (") + x + ")";
-      - lvgl.button.update:
-          id: btn_room_toilet
-          bg_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xffc107);
-            if (x == "off") return lv_color_hex(0x2d87c8);
-            return lv_color_hex(0x808080);
-          bg_grad_color: !lambda |-
-            if (x == "on")  return lv_color_hex(0xdfa100);
-            if (x == "off") return lv_color_hex(0x1973b4);
-            return lv_color_hex(0x606060);
-          bg_grad_dir: VER
       - lvgl.button.update:
           id: btn_house_toilet
           bg_color: !lambda |-
@@ -356,6 +317,18 @@ text_sensor:
             if (x == "off") return lv_color_hex(0x1973b4);
             return lv_color_hex(0x606060);
           bg_grad_dir: VER
+  - platform: homeassistant
+    id: ts_ac_zone
+    entity_id: ${room_ac_zone_switch}
+    on_value:
+      - lvgl.label.update:
+          id: lbl_zone
+          text: !lambda 'return std::string("Zone: ") + (x == "on" ? "Open" : "Closed");'
+      - lvgl.button.update:
+          id: btn_zone
+          bg_color: !lambda 'return x == "on" ? lv_color_hex(0xffc107) : lv_color_hex(0x2d87c8);'
+          bg_grad_color: !lambda 'return x == "on" ? lv_color_hex(0xdfa100) : lv_color_hex(0x1973b4);'
+          bg_grad_dir: VER
 
 # ---------- Display (QSPI DBI) ----------
 spi:
@@ -450,7 +423,7 @@ touchscreen:
 #             root["y"] = touch.y;
 
 
-# WiFi signal strength sensor
+ # WiFi signal strength sensor
 sensor:
   - platform: wifi_signal
     id: wifi_dbm
@@ -466,6 +439,29 @@ sensor:
             else if (x >= -85) bars = 1;
             const char* levels[] = {"", "|", "||", "|||", "||||"};
             return std::string(LV_SYMBOL_WIFI " ") + levels[bars];
+  - platform: homeassistant
+    id: room_light_level
+    entity_id: ${room_light}
+    attribute: brightness
+    on_value:
+      - lvgl.slider.update:
+          id: sld_light
+          value: !lambda 'return x * 100.0 / 255.0;'
+  - platform: homeassistant
+    id: room_temperature
+    entity_id: ${room_temp_sensor}
+    on_value:
+      - lvgl.label.update:
+          id: lbl_temp
+          text: !lambda 'char buf[16]; snprintf(buf, sizeof(buf), "Temp: %.1f°C", x); return std::string(buf);'
+  - platform: homeassistant
+    id: room_setpoint
+    entity_id: ${room_climate_entity}
+    attribute: temperature
+    on_value:
+      - lvgl.label.update:
+          id: lbl_set_temp
+          text: !lambda 'char buf[16]; snprintf(buf, sizeof(buf), "Set: %.1f°C", x); return std::string(buf);'
 
 # ---------- LVGL UI (with working props) ----------
 lvgl:

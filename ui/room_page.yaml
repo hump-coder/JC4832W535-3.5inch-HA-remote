@@ -20,21 +20,14 @@ lvgl:
             border_width: 0
             border_color: 0x000000
 
-        # Title
-        - label:
-            text: "Room"
-            align: TOP_MID
-            y: 8
-            text_color: 0xFFFFFF
-
         # Clock
         - label:
             id: lbl_clock
             text: "00:00"
-            align: TOP_LEFT
-            x: 5
+            align: TOP_MID
             y: 5
             text_color: 0xFFFFFF
+            text_font: font_clock
 
         # WiFi status
         - label:
@@ -45,37 +38,110 @@ lvgl:
             y: 5
             text_color: 0xFFFFFF
 
-        # Buttons
-        - !include
-          file: button_template.yaml
-          vars:
-            btn_id: btn_room_bedroom
-            label_id: lbl_room_bedroom
-            label_text: "Bedroom"
-            entity_id: switch.bedroom_light_switch_2
-            x_pos: '10'
-            y_pos: '36'
-            width: '220'
-            height: '60'
-        - !include
-          file: button_template.yaml
-          vars:
-            btn_id: btn_room_kitchen
-            label_id: lbl_room_kitchen
-            label_text: "Kitchen"
-            entity_id: light.kitchen_light_dimmer
-            x_pos: '10'
-            y_pos: '106'
-            width: '220'
-            height: '60'
-        - !include
-          file: button_template.yaml
-          vars:
-            btn_id: btn_room_toilet
-            label_id: lbl_room_toilet
-            label_text: "Toilet"
-            entity_id: switch.toilet_light_switch_switch_3
-            x_pos: '10'
-            y_pos: '176'
-            width: '220'
-            height: '60'
+        # Light control label
+        - label:
+            text: "Light"
+            align: TOP_LEFT
+            x: 10
+            y: 60
+            text_color: 0xFFFFFF
+
+        # Light control slider
+        - slider:
+            id: sld_light
+            width: 300
+            height: 40
+            align: TOP_LEFT
+            x: 10
+            y: 80
+            min_value: 0
+            max_value: 100
+            on_value:
+              - if:
+                  condition:
+                    lambda: 'return x == 0;'
+                  then:
+                    - homeassistant.service:
+                        service: light.turn_off
+                        data:
+                          entity_id: ${room_light}
+                  else:
+                    - homeassistant.service:
+                        service: light.turn_on
+                        data:
+                          entity_id: ${room_light}
+                          brightness_pct: !lambda 'return x;'
+
+        # Current temperature
+        - label:
+            id: lbl_temp
+            text: "Temp: --"
+            align: TOP_LEFT
+            x: 10
+            y: 140
+            text_color: 0xFFFFFF
+
+        # Desired temperature
+        - label:
+            id: lbl_set_temp
+            text: "Set: --"
+            align: TOP_LEFT
+            x: 10
+            y: 170
+            text_color: 0xFFFFFF
+
+        # Temperature controls
+        - button:
+            id: btn_temp_down
+            width: 40
+            height: 40
+            align: TOP_LEFT
+            x: 200
+            y: 160
+            on_release:
+              - homeassistant.service:
+                  service: climate.set_temperature
+                  data:
+                    entity_id: ${room_climate_entity}
+                    temperature: !lambda 'return id(room_setpoint).state - 1;'
+            widgets:
+              - label:
+                  text: "-"
+                  align: CENTER
+        - button:
+            id: btn_temp_up
+            width: 40
+            height: 40
+            align: TOP_LEFT
+            x: 250
+            y: 160
+            on_release:
+              - homeassistant.service:
+                  service: climate.set_temperature
+                  data:
+                    entity_id: ${room_climate_entity}
+                    temperature: !lambda 'return id(room_setpoint).state + 1;'
+            widgets:
+              - label:
+                  text: "+"
+                  align: CENTER
+
+        # AC zone control
+        - button:
+            id: btn_zone
+            width: 160
+            height: 60
+            align: TOP_LEFT
+            x: 10
+            y: 220
+            on_release:
+              - homeassistant.service:
+                  service: homeassistant.toggle
+                  data:
+                    entity_id: ${room_ac_zone_switch}
+            widgets:
+              - label:
+                  id: lbl_zone
+                  text: "Zone"
+                  align: CENTER
+
