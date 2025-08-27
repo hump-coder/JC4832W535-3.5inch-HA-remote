@@ -8,14 +8,18 @@ button:
   bg_color: 0x808080
   bg_grad_color: 0x606060
   bg_grad_dir: VER
-  on_click:
-    - homeassistant.service:
-        service: homeassistant.toggle
-        data:
-          entity_id: ${entity_id}
-    - mqtt.publish:
-        topic: stat/${dev_topic}/${btn_id}
-        payload: "click"
+  on_release:
+    - if:
+        condition:
+          lambda: 'return lv_indev_get_gesture_dir(lv_indev_get_act()) == LV_DIR_NONE;'
+        then:
+          - homeassistant.service:
+              service: homeassistant.toggle
+              data:
+                entity_id: ${entity_id}
+          - mqtt.publish:
+              topic: stat/${dev_topic}/${btn_id}
+              payload: "click"
   widgets:
     - label:
         id: ${label_id}
