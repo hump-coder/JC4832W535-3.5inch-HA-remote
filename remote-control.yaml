@@ -1,10 +1,9 @@
 substitutions:
   friendly_name: Guition Display
   dev_topic: esp32-c3-35-inch-display   # used for MQTT topics
-  room_light: light.kitchen_light_dimmer
-  room_temp_sensor: sensor.kitchen_temperature
-  room_climate_entity: climate.kitchen
-  room_ac_zone_switch: switch.kitchen_ac_zone
+  room_light: switch.bedroom_light_switch_2
+  room_temp_sensor: sensor.temperature_kitchen_temperature
+  room_ac_zone_switch: switch.zone_6_2
 
 external_components:
   - source: github://esphome/esphome@2025.7.1
@@ -454,15 +453,6 @@ sensor:
       - lvgl.label.update:
           id: lbl_temp
           text: !lambda 'char buf[16]; snprintf(buf, sizeof(buf), "Temp: %.1f°C", x); return std::string(buf);'
-  - platform: homeassistant
-    id: room_setpoint
-    entity_id: ${room_climate_entity}
-    attribute: temperature
-    on_value:
-      - lvgl.label.update:
-          id: lbl_set_temp
-          text: !lambda 'char buf[16]; snprintf(buf, sizeof(buf), "Set: %.1f°C", x); return std::string(buf);'
-
 # ---------- LVGL UI (with working props) ----------
 lvgl:
   displays:

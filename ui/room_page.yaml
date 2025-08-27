@@ -81,50 +81,6 @@ lvgl:
             y: 140
             text_color: 0xFFFFFF
 
-        # Desired temperature
-        - label:
-            id: lbl_set_temp
-            text: "Set: --"
-            align: TOP_LEFT
-            x: 10
-            y: 170
-            text_color: 0xFFFFFF
-
-        # Temperature controls
-        - button:
-            id: btn_temp_down
-            width: 40
-            height: 40
-            align: TOP_LEFT
-            x: 200
-            y: 160
-            on_release:
-              - homeassistant.service:
-                  service: climate.set_temperature
-                  data:
-                    entity_id: ${room_climate_entity}
-                    temperature: !lambda 'return id(room_setpoint).state - 1;'
-            widgets:
-              - label:
-                  text: "-"
-                  align: CENTER
-        - button:
-            id: btn_temp_up
-            width: 40
-            height: 40
-            align: TOP_LEFT
-            x: 250
-            y: 160
-            on_release:
-              - homeassistant.service:
-                  service: climate.set_temperature
-                  data:
-                    entity_id: ${room_climate_entity}
-                    temperature: !lambda 'return id(room_setpoint).state + 1;'
-            widgets:
-              - label:
-                  text: "+"
-                  align: CENTER
 
         # AC zone control
         - button:
@@ -144,4 +100,3 @@ lvgl:
                   id: lbl_zone
                   text: "Zone"
                   align: CENTER
-
