@@ -42,7 +42,7 @@ lvgl:
             text_color: 0xFFFFFF
 
         # Row 1
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_kitchen
             label_id: lbl_house_kitchen
@@ -52,7 +52,7 @@ lvgl:
             y_pos: '36'
             width: '140'
             height: '60'
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_bedroom
             label_id: lbl_house_bedroom
@@ -62,7 +62,7 @@ lvgl:
             y_pos: '36'
             width: '140'
             height: '60'
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_toilet
             label_id: lbl_house_toilet
@@ -74,7 +74,7 @@ lvgl:
             height: '60'
 
         # Row 2
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_porch
             label_id: lbl_house_porch
@@ -84,7 +84,7 @@ lvgl:
             y_pos: '116'
             width: '140'
             height: '60'
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_north
             label_id: lbl_house_north
@@ -94,7 +94,7 @@ lvgl:
             y_pos: '116'
             width: '140'
             height: '60'
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_bbq
             label_id: lbl_house_bbq
@@ -106,7 +106,7 @@ lvgl:
             height: '60'
 
         # Row 3
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_west
             label_id: lbl_house_west
@@ -116,7 +116,7 @@ lvgl:
             y_pos: '196'
             width: '140'
             height: '60'
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_west_flood
             label_id: lbl_house_west_flood
@@ -126,7 +126,7 @@ lvgl:
             y_pos: '196'
             width: '140'
             height: '60'
-        - !include file: button_template.yaml
+        - !include button_template.yaml
           vars:
             btn_id: btn_house_rgb_flood
             label_id: lbl_house_rgb_flood
