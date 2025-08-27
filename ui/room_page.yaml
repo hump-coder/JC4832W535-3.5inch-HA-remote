@@ -10,10 +10,12 @@ lvgl:
         - obj:
             width: 480
             height: 320
-            align: CENTER
+            align: TOP_LEFT
+            x: 0
+            y: 0
             bg_opa: 100%
             bg_color: 0x202020
-            bg_grad_color: 0x000000
+            bg_grad_color: 0x202020
             bg_grad_dir: VER
 
         # Title
