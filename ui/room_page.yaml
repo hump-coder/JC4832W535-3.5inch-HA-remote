@@ -42,7 +42,8 @@ lvgl:
             text_color: 0xFFFFFF
 
         # Buttons
-        - !include button_template.yaml
+        - !include
+          file: button_template.yaml
           vars:
             btn_id: btn_room_bedroom
             label_id: lbl_room_bedroom
@@ -52,7 +53,8 @@ lvgl:
             y_pos: '36'
             width: '220'
             height: '60'
-        - !include button_template.yaml
+        - !include
+          file: button_template.yaml
           vars:
             btn_id: btn_room_kitchen
             label_id: lbl_room_kitchen
@@ -62,7 +64,8 @@ lvgl:
             y_pos: '106'
             width: '220'
             height: '60'
-        - !include button_template.yaml
+        - !include
+          file: button_template.yaml
           vars:
             btn_id: btn_room_toilet
             label_id: lbl_room_toilet
