@@ -24,7 +24,7 @@ esphome:
     board_build.f_cpu: 240000000L
   on_boot:
     then:
-      - lvgl.page.show: room_page
+      - lvgl.page.show: overview_page
 
 esp32:
   board: esp32-s3-devkitc-1
@@ -80,6 +80,11 @@ mqtt:
               lambda: 'return x.containsKey("page") && x["page"].as<std::string>() == "house";'
             then:
               - lvgl.page.show: house_page
+        - if:
+            condition:
+              lambda: 'return x.containsKey("page") && x["page"].as<std::string>() == "overview";'
+            then:
+              - lvgl.page.show: overview_page
 
 ota:
   - platform: esphome
@@ -134,6 +139,20 @@ time:
                 char buf[9];
                 t.strftime(buf, sizeof(buf), "%I:%M %p");
                 return std::string(buf);
+          - lvgl.label.update:
+              id: lbl_clock_o
+              text: !lambda |-
+                auto t = id(homeassistant_time).now();
+                char buf[6];
+                t.strftime(buf, sizeof(buf), "%I:%M");
+                return std::string(buf);
+          - lvgl.label.update:
+              id: lbl_day_o
+              text: !lambda |-
+                auto t = id(homeassistant_time).now();
+                char buf[10];
+                t.strftime(buf, sizeof(buf), "%A");
+                return std::string(buf);
 
 text_sensor:
   - platform: homeassistant
@@ -147,6 +166,17 @@ text_sensor:
             return std::string("Kitchen (") + x + ")";
       - lvgl.button.update:
           id: btn_house_kitchen
+          bg_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xffc107);
+            if (x == "off") return lv_color_hex(0x2d87c8);
+            return lv_color_hex(0x808080);
+          bg_grad_color: !lambda |-
+            if (x == "on")  return lv_color_hex(0xdfa100);
+            if (x == "off") return lv_color_hex(0x1973b4);
+            return lv_color_hex(0x606060);
+          bg_grad_dir: VER
+      - lvgl.button.update:
+          id: btn_overview_light
           bg_color: !lambda |-
             if (x == "on")  return lv_color_hex(0xffc107);
             if (x == "off") return lv_color_hex(0x2d87c8);
@@ -328,6 +358,11 @@ text_sensor:
           bg_color: !lambda 'return x == "on" ? lv_color_hex(0xffc107) : lv_color_hex(0x2d87c8);'
           bg_grad_color: !lambda 'return x == "on" ? lv_color_hex(0xdfa100) : lv_color_hex(0x1973b4);'
           bg_grad_dir: VER
+      - lvgl.button.update:
+          id: btn_overview_fan
+          bg_color: !lambda 'return x == "on" ? lv_color_hex(0xffc107) : lv_color_hex(0x2d87c8);'
+          bg_grad_color: !lambda 'return x == "on" ? lv_color_hex(0xdfa100) : lv_color_hex(0x1973b4);'
+          bg_grad_dir: VER
 
 # ---------- Display (QSPI DBI) ----------
 spi:
@@ -447,12 +482,23 @@ sensor:
           id: sld_light
           value: !lambda 'return x * 100.0 / 255.0;'
   - platform: homeassistant
+    id: kitchen_light_level
+    entity_id: light.kitchen_light_dimmer
+    attribute: brightness
+    on_value:
+      - lvgl.slider.update:
+          id: sld_overview_light
+          value: !lambda 'return x * 100.0 / 255.0;'
+  - platform: homeassistant
     id: room_temperature
     entity_id: ${room_temp_sensor}
     on_value:
       - lvgl.label.update:
           id: lbl_temp
           text: !lambda 'char buf[16]; snprintf(buf, sizeof(buf), "Temp: %.1f°C", x); return std::string(buf);'
+      - lvgl.label.update:
+          id: lbl_temp_o
+          text: !lambda 'char buf[8]; snprintf(buf, sizeof(buf), "%.1f°C", x); return std::string(buf);'
 # ---------- LVGL UI (with working props) ----------
 lvgl:
   displays:
@@ -464,3 +510,4 @@ lvgl:
 packages:
   room_page: !include ui/room_page.yaml
   house_page: !include ui/house_page.yaml
+  overview_page: !include ui/overview_page.yaml
