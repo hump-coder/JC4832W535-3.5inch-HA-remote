@@ -13,6 +13,13 @@ font:
   - file: "gfonts://Roboto"
     id: font_clock
     size: 48
+  # Font Awesome Free Solid for button icons
+  - file: fonts/Font-Awesome7Free-Solid-900.otf
+    id: font_icons
+    size: 56
+    glyphs:
+      - "\uF0EB"  # lightbulb
+      - "\uF863"  # fan
 
 esphome:
   name: esp32-c3-35-inch-display

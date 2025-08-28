@@ -57,10 +57,10 @@ lvgl:
                           entity_id: light.kitchen_light_dimmer
             widgets:
               - label:
-                  text: LV_SYMBOL_BULB
+                  text: "\uF0EB"     # Font Awesome: lightbulb
                   align: CENTER
                   text_color: 0xFFFFFF
-                  text_font: font_clock
+                  text_font: font_icons
 
         # Fan button
         - button:
@@ -84,10 +84,10 @@ lvgl:
                           entity_id: switch.zone_5_2
             widgets:
               - label:
-                  text: LV_SYMBOL_REFRESH
+                  text: "\uF863"     # Font Awesome: fan
                   align: CENTER
                   text_color: 0xFFFFFF
-                  text_font: font_clock
+                  text_font: font_icons
 
         # Brightness slider
         - slider:
