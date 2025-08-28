@@ -2,9 +2,17 @@ lvgl:
   pages:
     - id: overview_page
       on_swipe_left:
-        - lvgl.page.show: room_page
+        - if:
+            condition:
+              lambda: 'return !id(is_user_sliding_overview);'
+            then:
+              - lvgl.page.show: room_page
       on_swipe_right:
-        - lvgl.page.show: house_page
+        - if:
+            condition:
+              lambda: 'return !id(is_user_sliding_overview);'
+            then:
+              - lvgl.page.show: house_page
       widgets:
         # Background
         - obj:
@@ -19,6 +27,8 @@ lvgl:
             bg_grad_dir: VER
             border_width: 0
             border_color: 0x000000
+
+        # Swipe handled at page level with guard; no overlay zones
 
         # Clock
         - label:
@@ -98,21 +108,29 @@ lvgl:
             y: 230
             min_value: 0
             max_value: 100
+            on_press:
+              - lambda: 'id(is_user_sliding_overview) = true;'
+            on_release:
+              - lambda: 'id(is_user_sliding_overview) = false;'
             on_value:
               - if:
                   condition:
-                    lambda: 'return x == 0;'
+                    lambda: 'return id(is_user_sliding_overview);'
                   then:
-                    - homeassistant.service:
-                        service: light.turn_off
-                        data:
-                          entity_id: light.kitchen_light_dimmer
-                  else:
-                    - homeassistant.service:
-                        service: light.turn_on
-                        data:
-                          entity_id: light.kitchen_light_dimmer
-                          brightness_pct: !lambda 'return x;'
+                    - if:
+                        condition:
+                          lambda: 'return x == 0;'
+                        then:
+                          - homeassistant.service:
+                              service: light.turn_off
+                              data:
+                                entity_id: light.kitchen_light_dimmer
+                        else:
+                          - homeassistant.service:
+                              service: light.turn_on
+                              data:
+                                entity_id: light.kitchen_light_dimmer
+                                brightness_pct: !lambda 'return x;'
 
         # Temperature
         - label:

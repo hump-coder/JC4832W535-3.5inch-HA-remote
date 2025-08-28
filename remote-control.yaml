@@ -21,6 +21,13 @@ font:
       - "\uF0EB"  # lightbulb
       - "\uF863"  # fan
 
+# Runtime flags
+globals:
+  - id: is_user_sliding_overview
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+
 esphome:
   name: esp32-c3-35-inch-display
   friendly_name: ${friendly_name}
@@ -493,9 +500,13 @@ sensor:
     entity_id: light.kitchen_light_dimmer
     attribute: brightness
     on_value:
-      - lvgl.slider.update:
-          id: sld_overview_light
-          value: !lambda 'return x * 100.0 / 255.0;'
+      - if:
+          condition:
+            lambda: 'return !id(is_user_sliding_overview);'
+          then:
+            - lvgl.slider.update:
+                id: sld_overview_light
+                value: !lambda 'return x * 100.0 / 255.0;'
   - platform: homeassistant
     id: room_temperature
     entity_id: ${room_temp_sensor}
