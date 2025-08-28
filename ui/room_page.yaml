@@ -4,7 +4,7 @@ lvgl:
       on_swipe_left:
         - lvgl.page.show: house_page
       on_swipe_right:
-        - lvgl.page.show: house_page
+        - lvgl.page.show: overview_page
       widgets:
         # Background
         - obj:
