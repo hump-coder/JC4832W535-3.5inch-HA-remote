@@ -2,7 +2,7 @@ lvgl:
   pages:
     - id: house_page
       on_swipe_left:
-        - lvgl.page.show: room_page
+        - lvgl.page.show: overview_page
       on_swipe_right:
         - lvgl.page.show: room_page
       widgets:
